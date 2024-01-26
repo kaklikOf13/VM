@@ -34,6 +34,7 @@ type Value interface {
 	String() string
 	Bytes() []byte
 	Type() uint8
+	Compile() string
 }
 
 type NullType struct {
@@ -47,6 +48,9 @@ func (null *NullType) Bytes() []byte {
 }
 func (null *NullType) Type() uint8 {
 	return T_NullType
+}
+func (null *NullType) Compile() string {
+	return ""
 }
 
 type Int struct {
@@ -64,6 +68,9 @@ func (t *Int) Bytes() []byte {
 }
 func (t *Int) Type() uint8 {
 	return T_Int
+}
+func (t *Int) Compile() string {
+	return fmt.Sprint(t.value)
 }
 
 type Int64 struct {
@@ -90,6 +97,9 @@ func (t *Int32) Bytes() []byte {
 func (t *Int32) Type() uint8 {
 	return T_Int32
 }
+func (t *Int32) Compile() string {
+	return fmt.Sprint(t.value)
+}
 
 type Int16 struct {
 	NullType
@@ -107,6 +117,9 @@ func (t *Int16) Bytes() []byte {
 func (t *Int16) Type() uint8 {
 	return T_Int16
 }
+func (t *Int16) Compile() string {
+	return fmt.Sprint(t.value)
+}
 
 type Int8 struct {
 	NullType
@@ -121,6 +134,9 @@ func (t *Int8) Bytes() []byte {
 }
 func (t *Int8) Type() uint8 {
 	return T_Int8
+}
+func (t *Int8) Compile() string {
+	return fmt.Sprint(t.value)
 }
 
 type UInt struct {
@@ -176,6 +192,9 @@ func (t *String) Bytes() []byte {
 }
 func (t *String) Type() uint8 {
 	return T_String
+}
+func (t *String) Compile() string {
+	return `"` + t.value + `"`
 }
 
 type Node struct {
