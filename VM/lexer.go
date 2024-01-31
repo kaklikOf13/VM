@@ -6,15 +6,19 @@ import (
 )
 
 const (
-	TT_VALUE      = "Value"
-	TT_PLUS       = "Plus"
-	TT_MINUS      = "Minus"
-	TT_MUL        = "Mul"
-	TT_DIV        = "Div"
-	TT_LPAREN     = "Lparen"
-	TT_RPAREN     = "Rparen"
-	TT_NEWLINE    = "Newline"
-	TT_BREAKPOINT = "Breakpoint"
+	TT_VALUE        = "Value"
+	TT_PLUS         = "Plus"
+	TT_MINUS        = "Minus"
+	TT_MUL          = "Mul"
+	TT_DIV          = "Div"
+	TT_LPAREN       = "Lparen"
+	TT_RPAREN       = "Rparen"
+	TT_NEWLINE      = "Newline"
+	TT_BREAKPOINT   = "Breakpoint"
+	TT_VAR          = "Var"
+	TT_DEFINE_VAR   = "DVar"
+	TT_DOUBLE_POINT = "Double Point"
+	TT_EQUAL        = "Equal"
 )
 
 type Token struct {
@@ -61,6 +65,23 @@ func GerateTokens(input string) []Token {
 			l.Tokens = append(l.Tokens, Token{TT_NEWLINE, nil})
 		case ';':
 			l.Tokens = append(l.Tokens, Token{TT_BREAKPOINT, nil})
+		case ':':
+			l.Tokens = append(l.Tokens, Token{TT_DOUBLE_POINT, nil})
+		case '=':
+			l.Tokens = append(l.Tokens, Token{TT_EQUAL, nil})
+		}
+		if strings.ContainsRune(VARS_NAME, l.Ch) {
+			var value string
+			for strings.ContainsRune(VARS_NAME+"1234567890", l.Ch) && l.Ch != 0 {
+				value += string(l.Ch)
+				l.NextToken()
+			}
+			if value == "var" {
+				l.Tokens = append(l.Tokens, Token{TT_DEFINE_VAR, &NullType{}})
+			} else {
+				l.Tokens = append(l.Tokens, Token{TT_VAR, &String{value: value}})
+			}
+			continue
 		}
 		if strings.ContainsRune("1234567890.", l.Ch) {
 			var value string

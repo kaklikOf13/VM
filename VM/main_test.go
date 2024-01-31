@@ -20,7 +20,31 @@ func TestParser(t *testing.T) {
 
 func TestCompiler(t *testing.T) {
 	txt := vm.Compile(vm.Parse(vm.GerateTokens("10 + 10")))
+	fmt.Println(txt)
 	if txt != "10+10" {
+		t.Fail()
+	}
+}
+
+func TestVar(t *testing.T) {
+	txt := vm.Compile(vm.Parse(vm.GerateTokens("test")))
+	fmt.Println(txt)
+	if txt != "test" {
+		t.Fail()
+	}
+}
+func TestDefVar(t *testing.T) {
+	txt := vm.Compile(vm.Parse(vm.GerateTokens("var test2:uint16=0")))
+	fmt.Println(txt)
+	if txt != "unsigned short int test2 = 0;" {
+		t.Fail()
+	}
+}
+
+func TestDefVar2(t *testing.T) {
+	txt := vm.Compile(vm.Parse(vm.GerateTokens("var test2:uint16")))
+	fmt.Println(txt)
+	if txt != "unsigned short int test2;" {
 		t.Fail()
 	}
 }
