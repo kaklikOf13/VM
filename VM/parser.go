@@ -10,6 +10,7 @@ const (
 	NT_DEFINE_VAR = "Def Var"
 	NT_SET        = "Set"
 	NT_SET2       = "Set2"
+	NT_SCOPE      = "Scope"
 )
 
 type Parser struct {
@@ -50,9 +51,46 @@ func (this *Parser) value() *Node {
 			return &Node{NodeType: NT_VAR, Value: []Value{oldt.Value}}
 		case TT_DEFINE_VAR:
 			return &Node{NodeType: NT_DEFINE_VAR, Value: []Value{this.Main()}}
+		case TT_LKEY:
+			if oldt.Type != TT_LKEY {
+				return nil
+			}
+			return this.GetScope()
 		}
 	}
 	return &Node{NodeType: NT_VALUE, Value: []Value{&NullType{}}}
+}
+func (this *Parser) GetScope() *Node {
+	ret := []Value{}
+	toks := [][]Token{}
+	v := uint(1)
+	block := []Token{}
+	for v > 0 && this.curTok != nil {
+		if this.curTok.Type == TT_LKEY {
+			v++
+		} else if this.curTok.Type == TT_LKEY {
+			v--
+			if v == 0 {
+				toks = append(toks, block)
+				break
+			}
+		}
+		block = append(block, *this.curTok)
+		this.NextTok()
+		if this.curTok == nil {
+			this.NextBlock()
+			toks = append(toks, block)
+			block = []Token{}
+			if this.curBlock == nil {
+				break
+			}
+		}
+	}
+	val := ParseBlocks(toks)
+	for _, vv := range val {
+		ret = append(ret, vv)
+	}
+	return &Node{NodeType: NT_SCOPE, Value: ret}
 }
 func (this *Parser) tier1() *Node {
 	node := this.tier2()
@@ -107,9 +145,12 @@ func (this *Parser) Main() *Node {
 	return node
 }
 func Parse(toks []Token) []*Node {
+	return ParseBlocks(splitWithSeparators(toks, []string{TT_BREAKPOINT, TT_NEWLINE}))
+}
+func ParseBlocks(toks [][]Token) []*Node {
 	p := Parser{}
 	ret := []*Node{}
-	p.Blocks = splitWithSeparators(toks, []string{TT_BREAKPOINT, TT_NEWLINE})
+	p.Blocks = toks
 	p.NextBlock()
 	for p.curBlock != nil {
 		ret = append(ret, p.Main())

@@ -13,6 +13,8 @@ const (
 	TT_DIV          = "Div"
 	TT_LPAREN       = "Lparen"
 	TT_RPAREN       = "Rparen"
+	TT_LKEY         = "Lkey"
+	TT_RKEY         = "RKey"
 	TT_NEWLINE      = "Newline"
 	TT_BREAKPOINT   = "Breakpoint"
 	TT_VAR          = "Var"
@@ -67,6 +69,10 @@ func GerateTokens(input string) []Token {
 			l.Tokens = append(l.Tokens, Token{TT_BREAKPOINT, nil})
 		case ':':
 			l.Tokens = append(l.Tokens, Token{TT_DOUBLE_POINT, nil})
+		case '{':
+			l.Tokens = append(l.Tokens, Token{TT_LKEY, nil})
+		case '}':
+			l.Tokens = append(l.Tokens, Token{TT_RKEY, nil})
 		case '=':
 			l.Tokens = append(l.Tokens, Token{TT_EQUAL, nil})
 		}

@@ -34,17 +34,29 @@ func TestVar(t *testing.T) {
 	}
 }
 func TestDefVar(t *testing.T) {
-	txt := vm.Compile(vm.Parse(vm.GerateTokens("var test2:uint16=0")))
+	txt := vm.Compile(vm.Parse(vm.GerateTokens("var test:uint16=0")))
 	fmt.Println(txt)
-	if txt != "unsigned short int test2 = 0;" {
+	if txt != "unsigned short int test = 0;" {
 		t.Fail()
 	}
 }
 
 func TestDefVar2(t *testing.T) {
-	txt := vm.Compile(vm.Parse(vm.GerateTokens("var test2:uint16")))
+	txt := vm.Compile(vm.Parse(vm.GerateTokens("var test:uint16")))
 	fmt.Println(txt)
-	if txt != "unsigned short int test2;" {
+	if txt != "unsigned short int test;" {
+		t.Fail()
+	}
+}
+func TestScope(t *testing.T) {
+	txt := vm.Compile(vm.Parse(vm.GerateTokens("{1+1;{2+2}}")))
+	fmt.Println(txt)
+	if txt != `{
+    1+1;
+    {
+        2+2;
+    };
+};` {
 		t.Fail()
 	}
 }
