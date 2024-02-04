@@ -21,7 +21,7 @@ func TestParser(t *testing.T) {
 func TestCompiler(t *testing.T) {
 	txt := vm.Compile(vm.Parse(vm.GerateTokens("10 + 10")))
 	fmt.Println(txt)
-	if txt != "10+10" {
+	if txt != "10+10;" {
 		t.Fail()
 	}
 }
@@ -29,7 +29,7 @@ func TestCompiler(t *testing.T) {
 func TestVar(t *testing.T) {
 	txt := vm.Compile(vm.Parse(vm.GerateTokens("test")))
 	fmt.Println(txt)
-	if txt != "test" {
+	if txt != "test;" {
 		t.Fail()
 	}
 }
@@ -48,15 +48,17 @@ func TestDefVar2(t *testing.T) {
 		t.Fail()
 	}
 }
-func TestScope(t *testing.T) {
-	txt := vm.Compile(vm.Parse(vm.GerateTokens("{1+1;{2+2}}")))
+func TestFunction(t *testing.T) {
+	txt := vm.Compile(vm.Parse(vm.GerateTokens("fn main(a,b:int):int{a+b}")))
 	fmt.Println(txt)
-	if txt != `{
-    1+1;
-    {
-        2+2;
-    };
-};` {
+	if txt != "long int main(long int a,long int b){\n    a+b;\n};" {
+		t.Fail()
+	}
+}
+func TestFunction2(t *testing.T) {
+	txt := vm.Compile(vm.Parse(vm.GerateTokens("fn main(a,b:int){a+b}")))
+	fmt.Println(txt)
+	if txt != "void main(long int a,long int b){\n    a+b;\n};" {
 		t.Fail()
 	}
 }

@@ -35,6 +35,39 @@ func (this *Compiler) CompileNode(node *Node, offset string) string {
 			v = append(v, vv.(*Node))
 		}
 		return "{\n" + compile(v, offset+"    ") + "\n" + offset + "}"
+	case NT_SET2:
+		return GetTP(this.CompileNode(node.Value[1].(*Node), offset)) + " " + this.CompileNode(node.Value[0].(*Node), offset)
+	case NT_ARGS:
+		ret := ""
+		for _, v := range node.Value {
+			if ret != "" {
+				ret += ","
+			}
+			ret += this.CompileNode(v.(*Node), offset)
+		}
+		return "(" + ret + ")"
+	case NT_FUNCTION:
+		if len(node.Value) == 3 {
+			ret := "void"
+			if node.Value[1] != nil {
+				ret = GetTP(this.CompileNode(node.Value[1].(*Node), offset))
+			}
+			return ret + " " + this.CompileNode(node.Value[0].(*Node), offset) + this.CompileNode(node.Value[2].(*Node), offset)
+		}
+		if len(node.Value) == 2 {
+			ret := "void"
+			if node.Value[1] != nil {
+				ret = GetTP(this.CompileNode(node.Value[1].(*Node), offset))
+			}
+			return ret + " " + this.CompileNode(node.Value[0].(*Node), offset)
+		}
+		if len(node.Value) == 4 {
+			ret := "void"
+			if node.Value[2] != nil {
+				ret = GetTP(this.CompileNode(node.Value[2].(*Node), offset))
+			}
+			return ret + " " + this.CompileNode(node.Value[0].(*Node), offset) + this.CompileNode(node.Value[1].(*Node), offset) + this.CompileNode(node.Value[3].(*Node), offset)
+		}
 	default:
 		return ""
 	}
@@ -47,7 +80,10 @@ func compile(nodes []*Node, offset string) string {
 		if i > 0 {
 			ret += "\n"
 		}
-		ret += offset + c.CompileNode(nodes[i], offset) + ";"
+		cc := c.CompileNode(nodes[i], offset)
+		if cc != "" {
+			ret += offset + cc + ";"
+		}
 	}
 	return ret
 }

@@ -21,6 +21,8 @@ const (
 	TT_DEFINE_VAR   = "DVar"
 	TT_DOUBLE_POINT = "Double Point"
 	TT_EQUAL        = "Equal"
+	TT_FUNCTION     = "function"
+	TT_VIRGULA      = ","
 )
 
 type Token struct {
@@ -69,10 +71,16 @@ func GerateTokens(input string) []Token {
 			l.Tokens = append(l.Tokens, Token{TT_BREAKPOINT, nil})
 		case ':':
 			l.Tokens = append(l.Tokens, Token{TT_DOUBLE_POINT, nil})
+		case ',':
+			l.Tokens = append(l.Tokens, Token{TT_VIRGULA, nil})
 		case '{':
 			l.Tokens = append(l.Tokens, Token{TT_LKEY, nil})
 		case '}':
 			l.Tokens = append(l.Tokens, Token{TT_RKEY, nil})
+		case '(':
+			l.Tokens = append(l.Tokens, Token{TT_LPAREN, nil})
+		case ')':
+			l.Tokens = append(l.Tokens, Token{TT_RPAREN, nil})
 		case '=':
 			l.Tokens = append(l.Tokens, Token{TT_EQUAL, nil})
 		}
@@ -84,6 +92,8 @@ func GerateTokens(input string) []Token {
 			}
 			if value == "var" {
 				l.Tokens = append(l.Tokens, Token{TT_DEFINE_VAR, &NullType{}})
+			} else if value == "fn" {
+				l.Tokens = append(l.Tokens, Token{TT_FUNCTION, &NullType{}})
 			} else {
 				l.Tokens = append(l.Tokens, Token{TT_VAR, &String{value: value}})
 			}
